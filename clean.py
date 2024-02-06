@@ -20,6 +20,9 @@ def clean_data(input1, input2, output):
     # Step 4: Save the cleaned data
     merged_df.to_csv(output, index=False)
 
+    # Print the shape of the output file
+    print(f"Output file shape: {merged_df.shape}")
+
 
 if __name__ == '__main__':
     # Check if all required arguments are provided
