@@ -1,36 +1,30 @@
-import pandas as pd
 import sys
+import pandas as pd
 
 
 def clean_data(input1, input2, output):
-    # Step 1: Merge the two input data files based on the ID value
-    df1 = pd.read_csv(input1)
-    df2 = pd.read_csv(input2)
-    merged_df = pd.merge(df1, df2, left_on='respondent_id', right_on='id')
+    # Read the input files
+    contact_data = pd.read_csv(input1)
+    other_data = pd.read_csv(input2)
 
-    # Drop redundant column after merging
-    merged_df.drop('id', axis=1, inplace=True)
+    # Merge the data based on ID
+    merged_data = pd.merge(contact_data, other_data, left_on='respondent_id', right_on='id')
 
-    # Step 2: Drop rows with missing values
-    merged_df.dropna(inplace=True)
+    # Drop rows with missing values
+    merged_data = merged_data.dropna()
 
-    # Step 3: Drop rows if their job value contains 'insurance' or 'Insurance'
-    merged_df = merged_df[~merged_df['job'].str.contains('insurance|Insurance')]
+    # Drop rows with job values containing 'insurance' or 'Insurance'
+    merged_data = merged_data[~merged_data['job'].str.contains('insurance|Insurance')]
 
-    # Step 4: Save the cleaned data
-    merged_df.to_csv(output, index=False)
+    # Remove redundant columns
+    merged_data = merged_data.drop(columns=['id'])
 
-    # Print the shape of the output file
-    print(f"Output file shape: {merged_df.shape}")
+    # Save the cleaned data to the output file
+    merged_data.to_csv(output, index=False)
 
 
 if __name__ == '__main__':
-    # Check if all required arguments are provided
-    if len(sys.argv) != 4:
-        print("Please provide 3 required arguments: input1, input2, and output.")
-        sys.exit(1)
-
-    # Get the arguments from the command line
+    # Get the input and output file paths from command line arguments
     input1 = sys.argv[1]
     input2 = sys.argv[2]
     output = sys.argv[3]
